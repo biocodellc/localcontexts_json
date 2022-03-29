@@ -9,12 +9,9 @@ language_list = []
 
 for item in data:
     if item['Type'] == 'language':
-        for language in item['Description']:
-            language_list.append(language)
+        obj = {'tag': item['Subtag'], 'language': item['Description']}
+        language_list.append(obj)
 
-language_list.sort()
-
-obj = {'languages': language_list}
 # write list to json file
 with open('../data/iana.json', 'w') as file:
-    json.dump(obj, file)
+    json.dump(language_list, file)
