@@ -23,6 +23,8 @@ def key_value():
     for item in data:
         if item['Type'] == 'language':
             for lang in item['Description']:
+                if lang == 'Maori':
+                    lang = 'Māori'
                 language_dict[lang] = item['Subtag']
 
     # write list to json file
