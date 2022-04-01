@@ -23,10 +23,13 @@ def key_value():
     for item in data:
         if item['Type'] == 'language':
             for lang in item['Description']:
-                if lang == 'Maori':
-                    lang = 'Māori'
+                if lang == "Maori":
+                    lang = "Māori"
                 language_dict[lang] = item['Subtag']
 
+    # print(language_dict['Māori'])
     # write list to json file
     with open('../data/ianaObj.json', 'w') as file:
         json.dump(language_dict, file)
+
+# key_value()
