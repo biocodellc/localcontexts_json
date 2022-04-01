@@ -26,5 +26,5 @@ def key_value():
                 language_dict[lang] = item['Subtag']
 
     # write list to json file
-    with open('../data/ianaDict.json', 'w') as file:
+    with open('../data/ianaObj.json', 'w') as file:
         json.dump(language_dict, file)
