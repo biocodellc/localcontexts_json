@@ -1,27 +1,62 @@
 from urllib import response
+from pathlib import Path
 import requests
 import json
+import os
 
-response = requests.get('https://native-land.ca/wp-content/themes/Native-Land-Theme/files/indigenousTerritories.json')
-data = response.json()
 
-name_slug_list = []
+def download_artifacts():
+    native_land_api_key = os.getenv('NATIVELAND_API_KEY')
 
-for key in data['features']:
-    try:
-        name = key['properties']['Name']
-        slug = key['properties']['Slug']
+    if native_land_api_key is None:
+        raise Exception('NATIVELAND_API_KEY environment variable is not defined')
 
-        values = {'name': name, 'slug': slug}
-        name_slug_list.append(values)
-    except KeyError as e:
-        print(e.args[0])
+    response = requests.get(
+        f'https://native-land.ca/api/polygons/geojson/territories?key={native_land_api_key}'
+    )
+    data = response.json()
 
-# write list to json file
-with open('./data/nativeland.json', 'w') as file:
-    json.dump(name_slug_list, file)
+    slug_name_list = []
+    slug_coordinates_description_list = []
 
-# Make json prettier
-# def print_json(obj):
-#     text = json.dumps(obj, sort_keys=True, indent=4)
-#     print(text)
+    for key in data['features']:
+        try:
+            name = key['properties']['Name']
+            slug = key['properties']['Slug']
+            description = key['properties']['description']
+            coordinates = key['geometry']['coordinates']
+            slug_name_list.append(
+                {'slug': slug, 'name': name}
+            )
+            slug_coordinates_description_list.append(
+                {'slug': slug, 'coordinates': coordinates, 'description': description}
+            )
+        except KeyError as e:
+            print(e.args[0])
+
+    current_file_path = os.path.abspath(__file__)
+    repo_folder = str(
+        Path(current_file_path).parent.parent
+    )
+
+    # write nativeland_slug_name_list to json file
+    slug_name_list_file_path = os.path.join(
+        repo_folder,
+        'data',
+        'nativeland_slug_name_list.json'
+    )
+    with open(slug_name_list_file_path,'w') as file:
+        json.dump(slug_name_list, file)
+
+    # write slug_coordinates_description_list to json file
+    slug_coordinates_description_list_file_path = os.path.join(
+        repo_folder,
+        'data',
+        'nativeland_slug_coordinates_description_list.json'
+    )
+    with open(slug_coordinates_description_list_file_path, 'w') as file:
+        json.dump(slug_coordinates_description_list, file)
+
+
+if __name__ == '__main__':
+    download_artifacts()
