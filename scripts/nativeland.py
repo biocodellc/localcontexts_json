@@ -17,7 +17,7 @@ def download_artifacts():
     data = response.json()
 
     slug_name_list = []
-    slug_coordinates_description_list = []
+    slug_coordinates_description_dict = {}
 
     for key in data['features']:
         try:
@@ -28,9 +28,9 @@ def download_artifacts():
             slug_name_list.append(
                 {'slug': slug, 'name': name}
             )
-            slug_coordinates_description_list.append(
-                {'slug': slug, 'coordinates': coordinates, 'description': description}
-            )
+            slug_coordinates_description_dict[slug] = {
+                'coordinates': coordinates, 'description': description
+            }
         except KeyError as e:
             print(e.args[0])
 
@@ -48,14 +48,14 @@ def download_artifacts():
     with open(slug_name_list_file_path,'w') as file:
         json.dump(slug_name_list, file)
 
-    # write slug_coordinates_description_list to json file
-    slug_coordinates_description_list_file_path = os.path.join(
+    # write slug_coordinates_description_dict to json file
+    slug_coordinates_description_dict_file_path = os.path.join(
         repo_folder,
         'data',
-        'nativeland_slug_coordinates_description_list.json'
+        'nativeland_slug_coordinates_description_dict.json'
     )
-    with open(slug_coordinates_description_list_file_path, 'w') as file:
-        json.dump(slug_coordinates_description_list, file)
+    with open(slug_coordinates_description_dict_file_path, 'w') as file:
+        json.dump(slug_coordinates_description_dict, file)
 
 
 if __name__ == '__main__':
