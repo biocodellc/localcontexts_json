@@ -25,6 +25,11 @@ def download_artifacts():
             slug = key['properties']['Slug']
             description = key['properties']['description']
             coordinates = key['geometry']['coordinates']
+
+            # omit recording slug data when it's missing coordinates
+            if len(coordinates) == 0 or len(coordinates[0]) == 0 or len(coordinates[0][0]) == 0:
+                continue
+
             slug_name_list.append(
                 {'slug': slug, 'name': name}
             )
